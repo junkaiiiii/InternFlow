@@ -17,6 +17,7 @@ export default function SignUp() {
         password: "",
         confirmPassword: "",
     });
+    const [error, setError] = useState<string | null>(null)
 
     const handleChange = (field: keyof SignUpFormData) => {
         return (event: ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +28,16 @@ export default function SignUp() {
     const handleSignUp = () => {
         // TODO: actual data in backend and use helpers function to call backend
         // TODO: validate email and passwords and username (username check in backend)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(formData.email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        if (formData.email !== formData.confirmPassword){
+            setError("The passwords are not same.");
+            return;
+        }
         console.log(formData)
     }
 
