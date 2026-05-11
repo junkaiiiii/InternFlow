@@ -1,5 +1,8 @@
 'use client'
 import { type ChangeEvent, useState } from "react";
+import { api } from "@/libs/api"
+import { useRouter } from "next/navigation";
+import { AuthValidator } from "@/libs/validators/index";
 
 const features = ["Track every application", "Stay ahead of deadlines", "See your internship pipeline"];
 
@@ -19,26 +22,51 @@ export default function SignUp() {
     });
     const [error, setError] = useState<string | null>(null)
 
+    const router = useRouter()
+
     const handleChange = (field: keyof SignUpFormData) => {
         return (event: ChangeEvent<HTMLInputElement>) => {
             setFormData((prev) => ({ ...prev, [field]: event.target.value }));
         };
     };
 
-    const handleSignUp = () => {
-        // TODO: actual data in backend and use helpers function to call backend
-        // TODO: validate email and passwords and username (username check in backend)
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(formData.email)) {
-            setError("Please enter a valid email address.");
-            return;
+    const handleSignUp = async () => {
+        // TODO: actual data in backend and use helpers function to call backend //done
+        // TODO: validate email and passwords and username (username check in backend) //done
+
+        try {
+            const error = AuthValidator.signup(formData)
+            if (error) {
+                setError(error)
+            }
+            console.log({
+                username: formData.username,
+                password: formData.password,
+                email: formData.email
+            })
+
+            // actual signup logic
+            const data = await api.post('/user/signup',
+                {
+                    username: formData.username,
+                    password: formData.password,
+                    email: formData.email
+                }
+            )
+
+
+            if (data.success) {
+                localStorage.setItem("intern-flow-token", data.data.token)
+                router.push('/analytics')
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError("An unknown error occurred.");
+            }
         }
 
-        if (formData.email !== formData.confirmPassword){
-            setError("The passwords are not same.");
-            return;
-        }
-        console.log(formData)
     }
 
     return (
@@ -77,6 +105,7 @@ export default function SignUp() {
                                 Start organizing your internship applications today.
                             </p>
                         </div>
+
 
                         <div className="mt-8 space-y-2">
                             <label className="block">
@@ -127,9 +156,12 @@ export default function SignUp() {
                                 />
                             </label>
 
-
+                            {error && (
+                                <p className="text-red-500 mt-5">{error}</p>
+                            )
+                            }
                             <button
-                                className="mt-10 h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer"
+                                className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer`}
                                 onClick={handleSignUp}
                             >
                                 Sign up
@@ -142,6 +174,7 @@ export default function SignUp() {
                                 Log in
                             </a>
                         </p>
+
                     </div>
                 </div>
             </div>

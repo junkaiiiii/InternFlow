@@ -16,7 +16,7 @@ export class UserSchema extends ValidateSchema {
     })
 
     public static createUserSchema = z.object({
-        username: z.string().min(3).max(32),
+        username: z.string(),
         email: z.string().email(),
         password: z.string()
     });

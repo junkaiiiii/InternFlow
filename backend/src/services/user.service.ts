@@ -27,6 +27,7 @@ class UserService {
         const { username, password, email } = req.body;
         try {
             const passwordHash = await bcrypt.hash(password, 10)
+            
             const result = await prisma.user.create({
                 data: {
                     username,
@@ -35,7 +36,11 @@ class UserService {
                     registered_at: new Date()
                 }
             });
-            sendSuccess(res, result);
+
+            
+            const token = signToken({ id: result.id, username: result.username });
+
+            sendSuccess(res, {token});
         } catch (error) {
             sendError(res, "Error");
         }
