@@ -4,22 +4,43 @@ import { type Request, type Response } from "express";
 import { sendSuccess, sendError } from "../libs/response.js";
 import { parseId } from "../libs/parse.js";
 import { signToken } from "../libs/jwt.js";
+import type { TCreateUser, TUser, TPublicUser, TUpdateUser } from "../types/types.js";
 
 class UserService {
     public static getUsers = async (req: Request, res: Response) => {
-        const users = await prisma.user.findMany()
+        const users: TPublicUser[]  = await prisma.user.findMany({select:{username:true, id: true, email:true, registered_at: true}})
         sendSuccess(res, { users }, 200)
     }
 
     public static getUserById = async (req: Request, res: Response) => {
         const id = parseId(req.params.id);
         try {
-            const user = await prisma.user.findUniqueOrThrow({
+            const user: TPublicUser = await prisma.user.findUniqueOrThrow({
                 where: { id },
+                select:{username:true, id: true, email:true, registered_at: true}
             });
             sendSuccess(res, user)
         } catch (error) {
-            sendError(res, "Error")
+            sendError(res, `Error When Getting User By Id ${id}` )
+        }
+    }
+
+    public static getCurrentUser = async (req: Request, res: Response) => {
+        const id = req.user!.id
+        try {
+            const user: TPublicUser = await prisma.user.findUniqueOrThrow({
+                where: { id },
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    registered_at: true
+                }
+            })
+            sendSuccess(res, { user })
+
+        } catch {
+            sendError(res, "Error When Getting Current User")
         }
     }
 
@@ -27,8 +48,8 @@ class UserService {
         const { username, password, email } = req.body;
         try {
             const passwordHash = await bcrypt.hash(password, 10)
-            
-            const result = await prisma.user.create({
+
+            const result: TUser = await prisma.user.create({
                 data: {
                     username,
                     password: passwordHash,
@@ -37,10 +58,10 @@ class UserService {
                 }
             });
 
-            
+
             const token = signToken({ id: result.id, username: result.username });
 
-            sendSuccess(res, {token});
+            sendSuccess(res, { token });
         } catch (error) {
             sendError(res, "Error");
         }
@@ -50,7 +71,7 @@ class UserService {
         const { username, password } = req.body
 
         try {
-            const result = await prisma.user.findUnique({
+            const result: TUser | null = await prisma.user.findUnique({
                 where: {
                     username
                 }
@@ -64,7 +85,7 @@ class UserService {
 
             const token = signToken({ id: result.id, username: result.username });
 
-            sendSuccess(res, { message: "Login successful", token })
+            sendSuccess(res, { token })
         } catch (error) {
             sendError(res, "Login Failed")
         }
@@ -75,14 +96,16 @@ class UserService {
         const id = parseId(req.params.id);
 
         try {
-            const user = await prisma.user.update({
+            const user: TPublicUser = await prisma.user.update({
                 where: { id },
                 data: {
                     ...(username && { username }),
                     ...(password && { password }),
                     ...(email && { email }),
                 },
+                omit: { password: true }
             });
+
             sendSuccess(res, { user });
         } catch {
             sendError(res, "User not found", 404);

@@ -11,6 +11,8 @@ router.post("/login", validate(UserSchema.loginSchema), UserService.login)
 
 // protected routes
 router.use("/", authMiddleware)
+
+router.get('/me', UserService.getCurrentUser)     
 router.get("/", UserService.getUsers);
 router.get("/:id", validate(UserSchema.idParamSchema, "params"), UserService.getUserById);
 

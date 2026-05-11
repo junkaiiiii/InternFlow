@@ -1,6 +1,9 @@
 const BASE_URL = "http://localhost:5132/api"
 
-const getToken = () => localStorage.getItem("intern-flow-token")
+const getToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("intern-flow-token");
+  };
 
 export const api = {
     get: (path: string) => {

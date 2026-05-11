@@ -1,17 +1,18 @@
 'use client'
 
 import { useEffect, useState } from "react";
+import Sidebar from "@/components/sidebar"
 
 export default function Analytics() {
     const [token, setToken] = useState<string | null>(null);
+    console.log(token)
 
     useEffect(() => {
         setToken(localStorage.getItem("intern-flow-token"));
     }, []);
     return (
         <div>
-            <h1>Analytics</h1>
-            <h1>{token}</h1>
+            <Sidebar></Sidebar>
         </div>
 
     )

@@ -7,5 +7,5 @@ export const signToken = (payload: { id: number; username: string }) => {
 };
 
 export const verifyToken = (token: string) => {
-  return jwt.verify(token, SECRET) as { id: number; username: string };
+  return jwt.verify(token, SECRET) as { id: string; username: string };
 };

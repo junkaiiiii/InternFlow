@@ -18,7 +18,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     try {
         const payload = verifyToken(token);
         
-        req.user = payload; // attach user to request
+        const { id, ...rest } = payload;
+        req.user = { id: parseInt(id, 10), ...rest }; // attach user to request
         // sendSuccess(res, {hi:token})
         next()
     } catch {
