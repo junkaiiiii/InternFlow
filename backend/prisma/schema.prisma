@@ -14,4 +14,42 @@ model User {
   password      String   @db.VarChar
   email         String?  @db.VarChar
   registered_at DateTime @db.Timestamptz(6)
+  boards        Board[]
+}
+
+enum ApplicationPriority {
+  high
+  medium
+  low
+}
+
+model Board {
+  id      Int      @id @default(autoincrement())
+  userId  Int      @unique
+  user    User     @relation(fields: [userId], references: [id])
+  columns Column[]
+}
+
+model Column {
+  id           Int           @id @default(autoincrement())
+  boardId      Int
+  board        Board         @relation(fields: [boardId], references: [id])
+  name         String
+  order        Int
+  color        String?
+  applications Application[]
+
+  @@unique([boardId, order])
+}
+
+model Application {
+  id         Int                 @id @default(autoincrement())
+  columnId   Int
+  column     Column              @relation(fields: [columnId], references: [id])
+  company    String
+  role       String
+  order      Int
+  priority   ApplicationPriority
+  appliedAt  DateTime?
+  createdAt  DateTime            @default(now())
 }
