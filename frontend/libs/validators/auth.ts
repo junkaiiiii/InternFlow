@@ -7,7 +7,11 @@ export class AuthValidator extends Validator{
         password: string;
         confirmPassword: string;
     }) => {
-        const {confirmPassword, ...rest} = data
+        const rest = {
+            username: data.username,
+            email: data.email,
+            password: data.password,
+        }
         const error = this.checkEmpty(rest);
 
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

@@ -1,5 +1,5 @@
-import { MoreHorizontal, Plus, GripVertical } from "lucide-react"
-import type { TBoard, TColumn, TApplication } from "@/types/types"
+import { GripVertical } from "lucide-react"
+import type { TApplication } from "@/types/types"
 
 
 const priorityColors = {
@@ -10,6 +10,8 @@ const priorityColors = {
 
 
 export default function KanbanCardItem({ card }: { card: TApplication}) {
+    const appliedAt = card.appliedAt ? new Date(card.appliedAt).toLocaleDateString() : "N/A"
+
     return (
       <div className="group relative rounded-lg border border-gray-500 py-3 px-5 transition-all duration-200 hover:border-primary/30 hover:shadow-sm cursor-grab active:cursor-grabbing mt-4 bg-background">
 
@@ -31,7 +33,7 @@ export default function KanbanCardItem({ card }: { card: TApplication}) {
         </div>
   
         <div className="flex items-center gap-1.5 flex-wrap mt-4 ">
-          {card.skills.map((skill, index) => (
+          {card.skills?.map((skill, index) => (
             <span
               key={index}
               className="inline-flex items-center rounded px-1.5 py-0.5 text-sm font-medium bg-muted text-muted-foreground border-primary/50 border rounded-full"
@@ -42,7 +44,7 @@ export default function KanbanCardItem({ card }: { card: TApplication}) {
         </div>
   
           <p className="mt-2 text-sm text-gray-500">
-            Applied at: {card.appliedAt ? card.appliedAt.toLocaleDateString() : "N/A"}
+            Applied at: {appliedAt}
           </p>
 
       </div>

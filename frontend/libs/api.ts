@@ -5,36 +5,40 @@ const getToken = () => {
     return localStorage.getItem("intern-flow-token");
   };
 
+const getHeaders = () => {
+    const token = getToken();
+    const headers: HeadersInit = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
+};
+
 export const api = {
     get: (path: string) => {
         return fetch(`${BASE_URL}${path}`, {
-            headers: {
-                "Authorization": `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-            }
+            headers: getHeaders()
         })
             .then(res => res.json())
     },
 
-    post: (path: string, body: any) => {
+    post: (path: string, body: unknown) => {
         return fetch(`${BASE_URL}${path}`, {
             method: "POST",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-            },
+            headers: getHeaders(),
             body: JSON.stringify(body)
         })
             .then(res => res.json())
     },
 
-    put: (path: string, body: any) => {
+    put: (path: string, body: unknown) => {
         return fetch(`${BASE_URL}${path}`, {
             method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-            },
+            headers: getHeaders(),
             body: JSON.stringify(body)
         })
             .then(res => res.json())
@@ -43,10 +47,7 @@ export const api = {
     delete: (path: string) => {
         return fetch(`${BASE_URL}${path}`, {
             method: "DELETE",
-            headers: {
-                "Authorization": `Bearer ${getToken()}`,
-                "Content-Type": "application/json",
-            }
+            headers: getHeaders()
         })
             .then(res => res.json())
     },

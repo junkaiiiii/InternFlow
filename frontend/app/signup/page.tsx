@@ -3,7 +3,7 @@ import { type ChangeEvent, useState } from "react";
 import { api } from "@/libs/api"
 import { useRouter } from "next/navigation";
 import { AuthValidator } from "@/libs/validators/index";
-import { TApiResponse, TPublicUser, TJWTResponse } from "@/types/types";
+import type { TApiResponse, TJWTResponse } from "@/types/types";
 
 const features = ["Track every application", "Stay ahead of deadlines", "See your internship pipeline"];
 

@@ -34,6 +34,9 @@ export type TBoard = {
     columns: TColumn[]
 }
 
+export type TBoardDetailed = TBoard & {columns: TColumnDetailed[]}
+
+
 export type TColumn = {
     id: number
     boardId: number
@@ -44,6 +47,9 @@ export type TColumn = {
     applications: TApplication[]
 }
 
+export type TColumnDetailed = TColumn & {applications: TApplication[]}
+
+
 export type TApplication = {
     id: number
     columnId: number
@@ -52,7 +58,7 @@ export type TApplication = {
     role: string
     order: number
     priority: AppicationPriority
-    skills: String[]
-    appliedAt?: Date | null
-    createdAt: Date
+    skills?: string[]
+    appliedAt?: Date | string | null
+    createdAt: Date | string
 }

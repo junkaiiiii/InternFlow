@@ -1,5 +1,5 @@
 export class Validator {
-    static checkEmpty = (data: Object) => {
+    static checkEmpty = (data: object) => {
         for (const [key, value] of Object.entries(data)){
             if (value === null || value === undefined || value === "") {
                 console.log('hi')
