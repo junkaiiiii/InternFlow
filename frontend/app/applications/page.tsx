@@ -58,7 +58,7 @@ export default function Applications(){
             company: "Grab",
             role: "Internship",
             order: 1,
-            priority: AppicationPriority.high,
+            priority: AppicationPriority.low,
             skills: ["React Native", "Firebase"],
             appliedAt: new Date(),
             createdAt: new Date(),

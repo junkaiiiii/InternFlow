@@ -3,6 +3,7 @@ import { type ChangeEvent, useState } from "react";
 import { api } from "@/libs/api"
 import { useRouter } from "next/navigation";
 import { AuthValidator } from "@/libs/validators/index";
+import { TApiResponse, TPublicUser, TJWTResponse } from "@/types/types";
 
 const features = ["Track every application", "Stay ahead of deadlines", "See your internship pipeline"];
 
@@ -38,15 +39,12 @@ export default function SignUp() {
             const error = AuthValidator.signup(formData)
             if (error) {
                 setError(error)
+                return
             }
-            console.log({
-                username: formData.username,
-                password: formData.password,
-                email: formData.email
-            })
+
 
             // actual signup logic
-            const data = await api.post('/user/signup',
+            const data: TApiResponse<TJWTResponse> = await api.post('/user/signup',
                 {
                     username: formData.username,
                     password: formData.password,

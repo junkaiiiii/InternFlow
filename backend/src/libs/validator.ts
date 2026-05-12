@@ -5,7 +5,7 @@ export class ValidateSchema {
         id: z.string().regex(/^\d+$/, "ID must be a number"),
     });
 
-    
+
 
 }
 

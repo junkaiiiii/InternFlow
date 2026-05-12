@@ -71,7 +71,7 @@ class UserService {
         const { username, password } = req.body
 
         try {
-            const result: TUser | null = await prisma.user.findUnique({
+            const result: TUser = await prisma.user.findUniqueOrThrow({
                 where: {
                     username
                 }
