@@ -47,7 +47,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
 
     const handleUpdateApplication = async (application: TApplicationUpdate) => {
         try {
-            const error = BoardValidator.createApplication(application)
+            const error = BoardValidator.updateApplication(application)
             if (error) {
                 alert(error)
                 return
@@ -55,7 +55,6 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
             console.log(application)
 
             const {id, ...rest} = application
-            console.log("id: ", `/board/application/${application.id}`)
             const res: TApiResponse<{ application: TApplication }> = await api.put(`/board/application/${application.id}`,rest)
             
             if (!res.success) {

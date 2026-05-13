@@ -19,4 +19,11 @@ export class BoardValidator extends Validator{
 
         return null
     }
+
+    static updateApplication = (data: Partial<TApplicationCreation>) => {
+
+        const error = this.checkEmpty(data)
+
+        return error ? error : null
+    }
 }
