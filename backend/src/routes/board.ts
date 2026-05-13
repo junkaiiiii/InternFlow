@@ -19,7 +19,8 @@ const router = Router();
 router.use('/', authMiddleware)
 
 router.get("/", BoardService.fetchBoardByUserId)
-router.post("/", validate(BoardSchema.createApplicationSchema), BoardService.createApplication)
+router.post("/application", validate(BoardSchema.createApplicationSchema), BoardService.createApplication)
+router.post("/init", BoardService.initBoard) //userid id is in jwt payload alr
 router.put("/", validate(BoardSchema.reorderCardsSchema), BoardService.reoderCards)
 
 export default router;

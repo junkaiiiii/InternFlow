@@ -4,20 +4,28 @@ import { KanbanBoard } from "@/components/KanbanBoard"
 import type { TApiResponse, TBoardDetailed, TColumnDetailed } from "@/types/types"
 import { api } from "@/libs/api"
 import { useEffect, useState } from "react"
+import { Plus } from "lucide-react"
 
-export default function ApplicationsClient(){
+export default function ApplicationsClient() {
     const [columns, setColumns] = useState<TColumnDetailed[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(()=>{
+    useEffect(() => {
         const fetchBoard = async () => {
             const data: TApiResponse<{ board: TBoardDetailed }> = await api.get('/board/')
 
             if (!data.success) {
-                setError(data.error ?? "Board is not found")
-                setIsLoading(false)
-                return
+                setError(data.error ?? "Board not found, initializing new board...")
+                setIsLoading(true)
+                const newBoardData: TApiResponse<{ board: TBoardDetailed }> = await api.post('/board/init', { body: {} })
+                console.log("Hi:", newBoardData)
+
+                if (!newBoardData.success) {
+                    setError(data.error ?? "Error when initializing board")
+                    setIsLoading(false)
+                    return
+                }
             }
 
             setColumns(data.data.board.columns)
@@ -33,7 +41,23 @@ export default function ApplicationsClient(){
     return (
         <div className="min-h-screen bg-background">
             <Sidebar />
+            {/* Header */}
+
+
             <main className="min-w-0 px-4 py-6 sm:px-6 lg:pl-72 lg:pr-8">
+                {/* Header */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-lg font-semibold text-foreground">Application Pipeline</h2>
+                        <p className="text-sm text-gray-500">Drag and drop to update status</p>
+                    </div>
+                    <button className="flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Application
+                    </button>
+                </div>
+
+                
                 {isLoading && <h1 className="mt-30 text-2xl">Loading board...</h1>}
                 {error && <h1 className="mt-30 text-2xl">{error}</h1>}
                 {!isLoading && !error && (

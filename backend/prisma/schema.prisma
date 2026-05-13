@@ -50,6 +50,7 @@ model Application {
   role       String
   order      Int
   priority   ApplicationPriority
+  url        String
   appliedAt  DateTime?
   createdAt  DateTime            @default(now())
 }

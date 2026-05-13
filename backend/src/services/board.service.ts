@@ -15,18 +15,22 @@ class BoardService {
     ];
 
     // this function should be only used after creating a user, never called on a port
-    public static initBoard = async (userId: number) => {
+    public static initBoard = async (req: Request, res: Response) => {
         try {
-            const board: TBoard = await prisma.board.create({
+            const userId = req.user!.id
+            const board: TBoardDetailed = await prisma.board.create({
                 data: {
                     userId,
                     columns: { create: this.DEFAULT_COLUMNS }
+                },
+                include: {
+                    columns: {include : {applications: true}}
                 }
             })
-            return board
+            sendSuccess(res, {board})
 
         } catch {
-            return null
+            sendError(res, "Error when initializing board")
         }
     }
 

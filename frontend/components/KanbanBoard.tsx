@@ -10,6 +10,9 @@ import { api } from "@/libs/api";
 
 export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] }) {
     const [columns, setColumns] = useState<TColumnDetailed[]>(initialData);
+    const handleAddApplication = async () => {
+
+    }
 
     const onDragEnd = (result: DropResult) => {
         const { source, destination } = result;
@@ -44,18 +47,6 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
 
     return (
         <div className="min-w-0 space-y-6">
-            {/* Header */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-lg font-semibold text-foreground">Application Pipeline</h2>
-                    <p className="text-sm text-gray-500">Drag and drop to update status</p>
-                </div>
-                <button className="flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Application
-                </button>
-            </div>
-
             {/* Board */}
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="flex min-w-0 gap-5 overflow-x-auto mt-30">
