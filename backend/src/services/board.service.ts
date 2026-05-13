@@ -109,6 +109,37 @@ class BoardService {
         }
     }
 
+    public static updateApplication = async (req: Request, res: Response) => {
+        try {
+            const applicationId = parseId(req.params.id)
+            const { company, role, priority, appliedAt, url, skills } = req.body
+
+            const data = {
+                ...(company && {company}),
+                ...(role && {role}),
+                ...(priority && {priority}),
+                ...(appliedAt && {appliedAt}),
+                ...(url && {url}),
+                ...(skills && {skills})
+            }
+
+            
+
+            const application = await prisma.application.update({
+                where: {
+                    id: applicationId
+                },
+                data
+            })
+
+
+            sendSuccess(res, { application }, 200)
+        } catch (error) {
+            console.error(error)
+            sendError(res, "Error when creating application")
+        }
+    }
+
     public static reoderCards = async (req: Request, res: Response) => {
         // get data first
         const { fromCol, toCol, cardId, newIndex }: { fromCol: number, toCol: number, cardId: number, newIndex: number } = req.body;

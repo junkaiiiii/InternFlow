@@ -91,7 +91,7 @@ export default function Login() {
                 <div className="bg-white/95 p-6 sm:p-10">
                     <div className="mx-auto flex w-full max-w-sm flex-col justify-center">
                         <div>
-                            <h2 className="text-2xl font-semibold text-black">Create account</h2>
+                            <h2 className="text-2xl font-semibold text-black">Log In</h2>
                             <p className="mt-2 text-sm text-gray-500">
                                 Start organizing your internship applications today.
                             </p>

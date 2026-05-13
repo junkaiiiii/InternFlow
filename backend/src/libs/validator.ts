@@ -46,4 +46,6 @@ export class BoardSchema extends ValidateSchema {
         cardId: z.number(),
         newIndex: z.number()
     })
+
+    public static updateApplicationSchema = this.createApplicationSchema.partial() ;
 }

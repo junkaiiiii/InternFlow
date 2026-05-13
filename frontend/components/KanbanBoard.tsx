@@ -4,16 +4,20 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { Plus } from "lucide-react"
 import { useState } from "react";
 import KanbanCardItem from "./KanbanCardItem";
-import { TColumnDetailed, TApplication, TApplicationCreation, TApiResponse } from "@/types/types";
+import { TColumnDetailed, TApplication, TApplicationCreation, TApiResponse, TApplicationUpdate } from "@/types/types";
 import { api } from "@/libs/api";
 import CreateApplicationPopUp from "./CreateApplicationPopUp";
 import { BoardValidator } from "@/libs/validators/index";
+import UpdateApplicationPopUp from "./UpdateApplicationPopUp";
 
 
 export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] }) {
     const [columns, setColumns] = useState<TColumnDetailed[]>(initialData);
     const [creationPopUpShowing, setCreationPopUpShowing] = useState<boolean>(false)
     const [newApplicationPosition, setNewApplicationPosition] = useState<{ columnId: number; order: number; }>()
+    const [updatePopUpShowing, setUpdatePopUpShowing] = useState<boolean>(false)
+    const [selectedApplication, setSelectedApplication] = useState<TApplicationUpdate>()
+
     const handleAddApplication = async (application: TApplicationCreation) => {
         try {
             const error = BoardValidator.createApplication(application)
@@ -39,6 +43,41 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
             console.error(error)
             alert("Error when creating new application")
         }
+    }
+
+    const handleUpdateApplication = async (application: TApplicationUpdate) => {
+        try {
+            const error = BoardValidator.createApplication(application)
+            if (error) {
+                alert(error)
+                return
+            }
+            console.log(application)
+
+            const {id, ...rest} = application
+            console.log("id: ", `/board/application/${application.id}`)
+            const res: TApiResponse<{ application: TApplication }> = await api.put(`/board/application/${application.id}`,rest)
+            
+            if (!res.success) {
+                alert(res.error)
+                return
+            }
+
+            setColumns(prev => prev.map(col => (
+                col.id === application.columnId
+                    ? { ...col, applications: col.applications.map(app => app.id === application.id ? res.data.application : app) }
+                    : col
+            )))
+            setUpdatePopUpShowing(false)
+        } catch (error) {
+            console.error(error)
+            alert("Error when creating new application")
+        }
+    }
+
+    const handleOpenUpdatePopUp = (application: TApplicationUpdate) => {
+        setSelectedApplication(application)
+        setUpdatePopUpShowing(true)
     }
 
     const onDragEnd = (result: DropResult) => {
@@ -76,7 +115,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
         <div className="min-w-0 space-y-6">
             {/* Board */}
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className="flex min-w-0 gap-5 overflow-x-auto mt-30">
+                <div className="flex min-w-0 gap-5 overflow-auto pt-30 pb-30">
                     {columns.map(col => (
                         <div key={col.id} className="h-full min-w-[300px] bg-background bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] border border-gray-500 rounded-lg overflow-hidden">
                             {/* https://ibelick.com/blog/create-grid-and-dot-backgrounds-with-css-tailwind-css */}
@@ -98,9 +137,12 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                                                         {...provided.draggableProps}
                                                         {...provided.dragHandleProps}
                                                     >
-                                                        <KanbanCardItem
-                                                            card={card}
-                                                        />
+                                                        <div onClick={() => handleOpenUpdatePopUp(card)}>
+                                                            <KanbanCardItem
+                                                                card={card}
+
+                                                            />
+                                                        </div>
                                                     </div>
                                                 )}
                                             </Draggable>
@@ -112,7 +154,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                             </Droppable>
                             <button className="flex w-full h-10 items-center justify-center rounded-md border-dashed border text-sm font-medium text-primary-foreground bg-background/70 hover:bg-background/90 cursor-pointer"
                                 onClick={() => {
-                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length+1 })
+                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length + 1 })
                                     setCreationPopUpShowing(prev => !prev)
 
                                 }}>
@@ -132,6 +174,14 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                     order={newApplicationPosition!.order}
                     onClose={() => setCreationPopUpShowing(false)}
                     onSubmit={handleAddApplication}
+                />
+            )}
+
+            {(selectedApplication && updatePopUpShowing) && (
+                <UpdateApplicationPopUp
+                    onClose={() => setUpdatePopUpShowing(false)}
+                    onSubmit={handleUpdateApplication}
+                    application={selectedApplication}
                 />
             )}
 

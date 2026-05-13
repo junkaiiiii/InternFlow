@@ -1,39 +1,24 @@
 'use client'
 
-import { AppicationPriority, TApplicationCreation } from "@/types/types"
+import { AppicationPriority, TApplicationCreation, TApplicationUpdate } from "@/types/types"
 import { FormEvent, useState } from "react"
 import { X } from "lucide-react"
 
 
 type Props = {
-  isShowing: boolean
-  columnId: number
-  order: number
+  application: TApplicationUpdate
   onClose: () => void
-  onSubmit: (application: TApplicationCreation) => void | Promise<void>
+  onSubmit: (application: TApplicationUpdate) => void | Promise<void>
 }
 
-export default function CreateApplicationPopUp({
-  isShowing,
-  columnId,
-  order,
+export default function UpdateApplicationPopUp({
+  application,
   onClose,
   onSubmit
 }: Props) {
   const [skillInput, setSkillInput] = useState("")
 
-  const [formData, setFormData] = useState<TApplicationCreation>({
-    columnId,
-    company: "",
-    role: "",
-    order,
-    priority: AppicationPriority.medium,
-    skills: [],
-    url: "",
-    appliedAt: null,
-  })
-
-  if (!isShowing) return null
+  const [formData, setFormData] = useState<TApplicationUpdate>(application)
 
   const addSkill = () => {
     const nextSkill = skillInput.trim()
@@ -60,8 +45,6 @@ export default function CreateApplicationPopUp({
     const pendingSkill = skillInput.trim()
     const application = {
       ...formData,
-      columnId,
-      order,
       skills: pendingSkill && !formData.skills?.includes(pendingSkill)
         ? [...(formData.skills || []), pendingSkill]
         : formData.skills,

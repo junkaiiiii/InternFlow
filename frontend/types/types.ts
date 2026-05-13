@@ -34,7 +34,7 @@ export type TBoard = {
     columns: TColumn[]
 }
 
-export type TBoardDetailed = TBoard & {columns: TColumnDetailed[]}
+export type TBoardDetailed = TBoard & { columns: TColumnDetailed[] }
 
 
 export type TColumn = {
@@ -47,7 +47,7 @@ export type TColumn = {
     applications: TApplication[]
 }
 
-export type TColumnDetailed = TColumn & {applications: TApplication[]}
+export type TColumnDetailed = TColumn & { applications: TApplication[] }
 
 
 export type TApplication = {
@@ -66,6 +66,11 @@ export type TApplication = {
 
 
 export type TApplicationCreation = Omit<
-  TApplication,
-  "id" | "column" | "createdAt"
+    TApplication,
+    "id" | "column" | "createdAt"
+>
+
+export type TApplicationUpdate = Omit<
+    TApplication,
+    "column" | "createdAt"
 >
