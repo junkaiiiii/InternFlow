@@ -1,8 +1,8 @@
 "use client"
 
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { Plus } from "lucide-react"
-import { useState } from "react";
+import { Plus, Search, X, ChevronUp, ChevronDown } from "lucide-react"
+import { useState, useMemo, useRef, useCallback } from "react";
 import KanbanCardItem from "./KanbanCardItem";
 import { TColumnDetailed, TApplication, TApplicationCreation, TApiResponse, TApplicationUpdate } from "@/types/types";
 import { api } from "@/libs/api";
@@ -17,6 +17,59 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
     const [newApplicationPosition, setNewApplicationPosition] = useState<{ columnId: number; order: number; }>()
     const [updatePopUpShowing, setUpdatePopUpShowing] = useState<boolean>(false)
     const [selectedApplication, setSelectedApplication] = useState<TApplicationUpdate>()
+    const [searchQuery, setSearchQuery] = useState("")
+    const [matchIndex, setMatchIndex] = useState(0)
+    const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map())  // card id → DOM node
+
+    // Collect all matched card IDs across all columns (in board order)
+    const matchedCardIds = useMemo(() => {
+        if (!searchQuery.trim()) return []
+        const query = searchQuery.toLowerCase()
+        const ids: number[] = []
+        columns.forEach(col =>
+            col.applications.forEach(app => {
+                if (
+                    app.company?.toLowerCase().includes(query) ||
+                    app.role?.toLowerCase().includes(query) ||
+                    app.skills?.some(skill => skill.toLowerCase().includes(query))
+                ){ ids.push(app.id) }
+            })
+        )
+        return ids
+    }, [columns, searchQuery])
+
+    const matchedSet = useMemo(() => new Set(matchedCardIds), [matchedCardIds])
+
+    // Scroll to a specific match index
+    const scrollToMatch = useCallback((index: number) => {
+        const id = matchedCardIds[index]
+        const el = cardRefs.current.get(id)
+        el?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" })
+    }, [matchedCardIds])
+
+    const goToNext = () => {
+        const next = (matchIndex + 1) % matchedCardIds.length
+        setMatchIndex(next)
+        scrollToMatch(next)
+    }
+
+    const goToPrev = () => {
+        const prev = (matchIndex - 1 + matchedCardIds.length) % matchedCardIds.length
+        setMatchIndex(prev)
+        scrollToMatch(prev)
+    }
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value)
+        setMatchIndex(0)
+        // Scroll to first match after state updates
+        setTimeout(() => scrollToMatch(0), 50)
+    }
+
+    const clearSearch = () => {
+        setSearchQuery("")
+        setMatchIndex(0)
+    }
 
     const handleAddApplication = async (application: TApplicationCreation) => {
         try {
@@ -111,8 +164,45 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
 
 
     return (
-        <div className="min-w-0 space-y-6">
-            {/* Board */}
+        <div className="min-w-0 space-y-6 mt-10">
+
+            {/* Search bar with match navigator */}
+            <div className="flex items-center gap-2">
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder="Search applications..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    />
+                    {searchQuery && (
+                        <button onClick={clearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
+                </div>
+
+                {/* Match counter + prev/next */}
+                {searchQuery && (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <span className="min-w-[60px]">
+                            {matchedCardIds.length === 0
+                                ? "No results"
+                                : `${matchIndex + 1} / ${matchedCardIds.length}`}
+                        </span>
+                        <button onClick={goToPrev} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
+                            <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button onClick={goToNext} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
+                            <ChevronDown className="h-4 w-4" />
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* Board — unchanged structure, just add ref + highlight ring */}
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className="flex min-w-0 gap-5 overflow-auto pt-30 pb-30">
                     {columns.map(col => (
@@ -123,33 +213,43 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                             </div>
                             <Droppable droppableId={String(col.id)}>
                                 {(provided) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        {...provided.droppableProps}
-                                        className="min-h-10 p-2"
-                                    >
-                                        {col.applications?.map((card, index) => (
-                                            <Draggable key={card.id} draggableId={String(card.id)} index={index}>
-                                                {(provided) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <div onClick={() => handleOpenUpdatePopUp(card)}>
-                                                            <KanbanCardItem
-                                                                card={card}
+                                    <div ref={provided.innerRef} {...provided.droppableProps} className="min-h-10 p-2">
+                                        {col.applications?.map((card, index) => {
+                                            const isMatch = matchedSet.has(card.id)
+                                            const isActive = matchedCardIds[matchIndex] === card.id
 
-                                                            />
+                                            return (
+                                                <Draggable key={card.id} draggableId={String(card.id)} index={index}>
+                                                    {(provided) => (
+                                                        <div
+                                                            ref={(el) => {
+                                                                provided.innerRef(el)           // dnd ref
+                                                                if (el) cardRefs.current.set(card.id, el)  // search ref
+                                                                else cardRefs.current.delete(card.id)
+                                                            }}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className={`rounded-lg transition-all duration-200 ${
+                                                                searchQuery && !isMatch
+                                                                    ? "opacity-50"           // dim non-matches
+                                                                    : ""
+                                                            } ${
+                                                                isActive
+                                                                    ? "ring-3 ring-primary ring-offset-2"  // highlight active match
+                                                                    : ""
+                                                            } `}
+                                                        >
+                                                            <div onClick={() => handleOpenUpdatePopUp(card)}>
+                                                                <KanbanCardItem card={card} color={col.color as string} />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))}
+                                                    )}
+                                                </Draggable>
+                                            )
+                                        })}
                                         {provided.placeholder}
                                     </div>
                                 )}
-
                             </Droppable>
                             <button className="flex w-full h-10 items-center justify-center rounded-md border-dashed border text-sm font-medium text-primary-foreground bg-background/70 hover:bg-background/90 cursor-pointer"
                                 onClick={() => {

@@ -9,7 +9,7 @@ const priorityColors = {
 }
 
 
-export default function KanbanCardItem({ card }: { card: TApplication }) {
+export default function KanbanCardItem({ card, color }: { card: TApplication, color: string }) {
 	const appliedAt = card.appliedAt ? new Date(card.appliedAt).toLocaleDateString() : "N/A"
 
 	return (
@@ -24,7 +24,7 @@ export default function KanbanCardItem({ card }: { card: TApplication }) {
 			</div>
 
 			<div className="flex items-start gap-5 mb-2 ">
-				<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-semibold text-foreground">
+				<div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-semibold text-foreground`} style={{backgroundColor: color}}>
 					{card.company.charAt(0)}
 				</div>
 				<div className="flex-1 min-w-0">
