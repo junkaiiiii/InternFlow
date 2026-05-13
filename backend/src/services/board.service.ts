@@ -70,17 +70,41 @@ class BoardService {
 
     public static createApplication = async (req: Request, res: Response) => {
         try {
-            const { order, columnId, company, role, priority, appliedAt, url } = req.body
-            // num, num, str, str, prisma priority, datetime OR string ?? note sure datetime can send from frontend onot, will know :>
+            const userId = req.user!.id
+            const { order, columnId, company, role, priority, appliedAt, url, skills } = req.body
 
-            const application = await prisma.application.create({
-                data: {
-                    order, columnId, company, role, priority, appliedAt, createdAt: new Date(), url
+            const column = await prisma.column.findFirst({
+                where: {
+                    id: columnId,
+                    board: { userId }
                 }
             })
 
-            sendSuccess(res, { application })
-        } catch {
+            if (!column) {
+                sendError(res, "Column not found", 404)
+                return
+            }
+
+            const applicationCount = await prisma.application.count({
+                where: { columnId }
+            })
+
+            const application = await prisma.application.create({
+                data: {
+                    order: Math.min(order, applicationCount),
+                    columnId,
+                    company,
+                    role,
+                    priority,
+                    appliedAt,
+                    url,
+                    skills
+                }
+            })
+
+            sendSuccess(res, { application }, 201)
+        } catch (error) {
+            console.error(error)
             sendError(res, "Error when creating application")
         }
     }

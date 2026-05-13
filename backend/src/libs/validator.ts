@@ -27,13 +27,17 @@ export class UserSchema extends ValidateSchema {
 
 export class BoardSchema extends ValidateSchema {
     public static createApplicationSchema = z.object({
-        order: z.number(),
-        columnId: z.number(),
-        company: z.string(),
-        role: z.string(),
+        order: z.number().int().nonnegative(),
+        columnId: z.number().int().positive(),
+        company: z.string().trim().min(1),
+        role: z.string().trim().min(1),
         priority: z.nativeEnum(ApplicationPriority), // Validate against Prisma enum
-        appliedAt: z.string().date().optional(),
-        url: z.string()
+        appliedAt: z.preprocess(
+            (value) => value === null || value === "" ? undefined : value,
+            z.coerce.date().optional()
+        ),
+        url: z.string().trim().min(1),
+        skills: z.array(z.string().trim().min(1)).default([]) //array of string
     })
 
     public static reorderCardsSchema = z.object({

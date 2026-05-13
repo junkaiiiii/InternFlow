@@ -4,17 +4,41 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea
 import { Plus } from "lucide-react"
 import { useState } from "react";
 import KanbanCardItem from "./KanbanCardItem";
-import { TColumnDetailed } from "@/types/types";
+import { TColumnDetailed, TApplication, TApplicationCreation, TApiResponse } from "@/types/types";
 import { api } from "@/libs/api";
 import CreateApplicationPopUp from "./CreateApplicationPopUp";
+import { BoardValidator } from "@/libs/validators/index";
 
 
 export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] }) {
     const [columns, setColumns] = useState<TColumnDetailed[]>(initialData);
     const [creationPopUpShowing, setCreationPopUpShowing] = useState<boolean>(false)
     const [newApplicationPosition, setNewApplicationPosition] = useState<{ columnId: number; order: number; }>()
-    const handleAddApplication = async () => {
+    const handleAddApplication = async (application: TApplicationCreation) => {
+        try {
+            const error = BoardValidator.createApplication(application)
+            if (error) {
+                alert(error)
+                return
+            }
 
+            const res: TApiResponse<{ application: TApplication }> = await api.post('/board/application', application)
+
+            if (!res.success) {
+                alert(res.error)
+                return
+            }
+
+            setColumns(prev => prev.map(col => (
+                col.id === application.columnId
+                    ? { ...col, applications: [...col.applications, res.data.application] }
+                    : col
+            )))
+            setCreationPopUpShowing(false)
+        } catch (error) {
+            console.error(error)
+            alert("Error when creating new application")
+        }
     }
 
     const onDragEnd = (result: DropResult) => {
@@ -87,8 +111,8 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
 
                             </Droppable>
                             <button className="flex w-full h-10 items-center justify-center rounded-md border-dashed border text-sm font-medium text-primary-foreground bg-background/70 hover:bg-background/90 cursor-pointer"
-                                onClick={(e) => {
-                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length + 1 })
+                                onClick={() => {
+                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length+1 })
                                     setCreationPopUpShowing(prev => !prev)
 
                                 }}>
@@ -107,6 +131,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                     columnId={newApplicationPosition!.columnId}
                     order={newApplicationPosition!.order}
                     onClose={() => setCreationPopUpShowing(false)}
+                    onSubmit={handleAddApplication}
                 />
             )}
 

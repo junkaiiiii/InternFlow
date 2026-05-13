@@ -51,6 +51,7 @@ model Application {
   order      Int
   priority   ApplicationPriority
   url        String
+  skills     String[]
   appliedAt  DateTime?
   createdAt  DateTime            @default(now())
 }

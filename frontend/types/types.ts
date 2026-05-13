@@ -63,3 +63,9 @@ export type TApplication = {
     appliedAt?: Date | string | null
     createdAt: Date | string
 }
+
+
+export type TApplicationCreation = Omit<
+  TApplication,
+  "id" | "column" | "createdAt"
+>

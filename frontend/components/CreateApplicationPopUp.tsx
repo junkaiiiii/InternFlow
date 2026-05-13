@@ -1,29 +1,25 @@
 'use client'
 
-import { TApplication, AppicationPriority } from "@/types/types"
-import { useState } from "react"
+import { AppicationPriority, TApplicationCreation } from "@/types/types"
+import { FormEvent, useState } from "react"
 import { X } from "lucide-react"
 
-type TApplicationCreation = Omit<
-  TApplication,
-  "id" | "column" | "createdAt"
->
 
 type Props = {
   isShowing: boolean
   columnId: number
   order: number
   onClose: ()=> void
+  onSubmit: (application : TApplicationCreation)=> void | Promise<void>
 }
 
 export default function CreateApplicationPopUp({
   isShowing,
   columnId,
   order, 
-  onClose
+  onClose,
+  onSubmit
 }: Props) {
-  if (!isShowing) return null
-
   const [skillInput, setSkillInput] = useState("")
 
   const [formData, setFormData] = useState<TApplicationCreation>({
@@ -37,12 +33,15 @@ export default function CreateApplicationPopUp({
     appliedAt: null,
   })
 
+  if (!isShowing) return null
+
   const addSkill = () => {
-    if (!skillInput.trim()) return
+    const nextSkill = skillInput.trim()
+    if (!nextSkill || formData.skills?.includes(nextSkill)) return
 
     setFormData((prev) => ({
       ...prev,
-      skills: [...(prev.skills || []), skillInput.trim()],
+      skills: [...(prev.skills || []), nextSkill],
     }))
 
     setSkillInput("")
@@ -54,8 +53,21 @@ export default function CreateApplicationPopUp({
       skills: prev.skills?.filter((s) => s !== skill),
     }))
   }
-  const handleSubmit = async () => {
-    console.log("hi")
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const pendingSkill = skillInput.trim()
+    const application = {
+      ...formData,
+      columnId,
+      order,
+      skills: pendingSkill && !formData.skills?.includes(pendingSkill)
+        ? [...(formData.skills || []), pendingSkill]
+        : formData.skills,
+    }
+
+    await onSubmit(application)
   }
 
 
@@ -219,10 +231,11 @@ export default function CreateApplicationPopUp({
 
             <input
               type="date"
+              value={formData.appliedAt ? String(formData.appliedAt).slice(0, 10) : ""}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  appliedAt: e.target.value,
+                  appliedAt: e.target.value || null,
                 })
               }
               className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-primary"

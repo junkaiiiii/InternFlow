@@ -4,7 +4,6 @@ import { KanbanBoard } from "@/components/KanbanBoard"
 import type { TApiResponse, TBoardDetailed, TColumnDetailed } from "@/types/types"
 import { api } from "@/libs/api"
 import { useEffect, useState } from "react"
-import { Plus } from "lucide-react"
 
 export default function ApplicationsClient() {
     const [columns, setColumns] = useState<TColumnDetailed[]>([])
