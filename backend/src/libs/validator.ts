@@ -32,7 +32,8 @@ export class BoardSchema extends ValidateSchema {
         company: z.string(),
         role: z.string(),
         priority: z.nativeEnum(ApplicationPriority), // Validate against Prisma enum
-        appliedAt: z.string().date().optional()
+        appliedAt: z.string().date().optional(),
+        url: z.string()
     })
 
     public static reorderCardsSchema = z.object({

@@ -59,6 +59,7 @@ export type TApplication = {
     order: number
     priority: AppicationPriority
     skills?: string[]
+    url: string
     appliedAt?: Date | string | null
     createdAt: Date | string
 }

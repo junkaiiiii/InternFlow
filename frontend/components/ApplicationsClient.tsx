@@ -51,13 +51,10 @@ export default function ApplicationsClient() {
                         <h2 className="text-lg font-semibold text-foreground">Application Pipeline</h2>
                         <p className="text-sm text-gray-500">Drag and drop to update status</p>
                     </div>
-                    <button className="flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Application
-                    </button>
+                    
                 </div>
 
-                
+
                 {isLoading && <h1 className="mt-30 text-2xl">Loading board...</h1>}
                 {error && <h1 className="mt-30 text-2xl">{error}</h1>}
                 {!isLoading && !error && (

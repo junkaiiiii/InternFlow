@@ -6,10 +6,13 @@ import { useState } from "react";
 import KanbanCardItem from "./KanbanCardItem";
 import { TColumnDetailed } from "@/types/types";
 import { api } from "@/libs/api";
+import CreateApplicationPopUp from "./CreateApplicationPopUp";
 
 
 export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] }) {
     const [columns, setColumns] = useState<TColumnDetailed[]>(initialData);
+    const [creationPopUpShowing, setCreationPopUpShowing] = useState<boolean>(false)
+    const [newApplicationPosition, setNewApplicationPosition] = useState<{ columnId: number; order: number; }>()
     const handleAddApplication = async () => {
 
     }
@@ -18,31 +21,31 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
         const { source, destination } = result;
         if (!destination) return;
         if (
-          source.droppableId === destination.droppableId &&
-          source.index === destination.index
+            source.droppableId === destination.droppableId &&
+            source.index === destination.index
         ) return; // dropped in same spot
-      
+
         const fromColId = parseInt(source.droppableId);
         const toColId = parseInt(destination.droppableId);
-      
+
         // update UI optimistically before backend responds
         const newColumns = [...columns];
         const fromCol = newColumns.find(c => c.id === fromColId)!;
         const toCol = newColumns.find(c => c.id === toColId)!;
-      
+
         const [movedCard] = fromCol.applications.splice(source.index, 1);
         toCol.applications.splice(destination.index, 0, movedCard);
-      
+
         setColumns(newColumns);
-      
+
         // sync to backend
         api.put("/board/", {
-          fromCol: fromColId,
-          toCol: toColId,
-          cardId: movedCard.id,
-          newIndex: destination.index,
+            fromCol: fromColId,
+            toCol: toColId,
+            cardId: movedCard.id,
+            newIndex: destination.index,
         });
-      };
+    };
 
 
     return (
@@ -81,11 +84,32 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                                         {provided.placeholder}
                                     </div>
                                 )}
+
                             </Droppable>
+                            <button className="flex w-full h-10 items-center justify-center rounded-md border-dashed border text-sm font-medium text-primary-foreground bg-background/70 hover:bg-background/90 cursor-pointer"
+                                onClick={(e) => {
+                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length + 1 })
+                                    setCreationPopUpShowing(prev => !prev)
+
+                                }}>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Add Application
+                            </button>
                         </div>
                     ))}
                 </div>
             </DragDropContext>
+
+            {/* TODO: handle colId and order better */}
+            {(newApplicationPosition?.columnId && newApplicationPosition.order) && (
+                <CreateApplicationPopUp
+                    isShowing={creationPopUpShowing}
+                    columnId={newApplicationPosition!.columnId}
+                    order={newApplicationPosition!.order}
+                    onClose={() => setCreationPopUpShowing(false)}
+                />
+            )}
+
         </div>
     )
 }

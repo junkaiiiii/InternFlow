@@ -70,12 +70,12 @@ class BoardService {
 
     public static createApplication = async (req: Request, res: Response) => {
         try {
-            const { order, columnId, company, role, priority, appliedAt } = req.body
+            const { order, columnId, company, role, priority, appliedAt, url } = req.body
             // num, num, str, str, prisma priority, datetime OR string ?? note sure datetime can send from frontend onot, will know :>
 
             const application = await prisma.application.create({
                 data: {
-                    order, columnId, company, role, priority, appliedAt, createdAt: new Date()
+                    order, columnId, company, role, priority, appliedAt, createdAt: new Date(), url
                 }
             })
 
