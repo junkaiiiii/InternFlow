@@ -1,0 +1,11 @@
+/* target every possible border in the grid */
+.fc td,
+.fc th,
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid td,
+.fc .fc-scrollgrid th,
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+  border-color: #6a6a6a !important;
+}
