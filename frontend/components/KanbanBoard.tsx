@@ -19,6 +19,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
     const [selectedApplication, setSelectedApplication] = useState<TApplicationUpdate>()
     const [searchQuery, setSearchQuery] = useState("")
     const [matchIndex, setMatchIndex] = useState(0)
+    const [isCardMinimized, setIsCardMinimized] = useState<boolean>(false)
     const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map())  // card id → DOM node
 
     // Collect all matched card IDs across all columns (in board order)
@@ -144,7 +145,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
             // update to frontend
             setColumns(prev => prev.map(col => {
                 if (col.applications.some(app => app.id === id)) {
-                    return {...col, applications: col.applications.filter(a => a.id !== id)}
+                    return { ...col, applications: col.applications.filter(a => a.id !== id) }
                 }
                 return col
             }
@@ -195,39 +196,50 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
         <div className="min-w-0 space-y-6 mt-10">
 
             {/* Search bar with match navigator */}
-            <div className="flex items-center gap-2">
-                <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                        type="text"
-                        placeholder="Search applications..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                        className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                    />
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="relative w-full max-w-sm">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search applications..."
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                            className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                        />
+                        {searchQuery && (
+                            <button onClick={clearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Match counter + prev/next */}
                     {searchQuery && (
-                        <button onClick={clearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                            <X className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <span className="min-w-[60px]">
+                                {matchedCardIds.length === 0
+                                    ? "No results"
+                                    : `${matchIndex + 1} / ${matchedCardIds.length}`}
+                            </span>
+                            <button onClick={goToPrev} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
+                                <ChevronUp className="h-4 w-4" />
+                            </button>
+                            <button onClick={goToNext} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
+                                <ChevronDown className="h-4 w-4" />
+                            </button>
+                        </div>
                     )}
+
                 </div>
 
-                {/* Match counter + prev/next */}
-                {searchQuery && (
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <span className="min-w-[60px]">
-                            {matchedCardIds.length === 0
-                                ? "No results"
-                                : `${matchIndex + 1} / ${matchedCardIds.length}`}
-                        </span>
-                        <button onClick={goToPrev} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
-                            <ChevronUp className="h-4 w-4" />
-                        </button>
-                        <button onClick={goToNext} disabled={matchedCardIds.length === 0} className="p-1 rounded hover:bg-accent disabled:opacity-40">
-                            <ChevronDown className="h-4 w-4" />
-                        </button>
-                    </div>
-                )}
+
+                <button
+                    className={`rounded-md text-white ${isCardMinimized ? 'bg-orange-400 hover:bg-orange-400/90': 'bg-primary hover:bg-primary/90'} py-1 px-2  cursor-pointer transition w-50`}
+                    onClick={() => setIsCardMinimized(prev => !prev)}
+                >
+                    {isCardMinimized ? "Maximize Card" : "Minimize Card"}
+                </button>
             </div>
 
             {/* Board — unchanged structure, just add ref + highlight ring */}
@@ -258,15 +270,19 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
                                                             className={`rounded-lg transition-all duration-200 ${searchQuery && !isMatch
-                                                                    ? "opacity-50"           // dim non-matches
-                                                                    : ""
+                                                                ? "opacity-50"           // dim non-matches
+                                                                : ""
                                                                 } ${isActive
                                                                     ? "ring-3 ring-primary ring-offset-2"  // highlight active match
                                                                     : ""
                                                                 } `}
                                                         >
                                                             <div onClick={() => handleOpenUpdatePopUp(card)}>
-                                                                <KanbanCardItem card={card} color={col.color as string} onDelete={handleDeleteApplication}/>
+                                                                <KanbanCardItem
+                                                                    card={card}
+                                                                    color={col.color as string}
+                                                                    minimized={isCardMinimized}
+                                                                    onDelete={handleDeleteApplication} />
                                                             </div>
                                                         </div>
                                                     )}
