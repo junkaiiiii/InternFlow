@@ -8,8 +8,7 @@ import Sidebar from "@/components/sidebar"
 
 export default function CalendarPage() {
   const events = [
-    { title: "Interview at Google", start: "2026-05-14T00:00:00.000Z", end: "2026-05-14T12:00:00.000Z" },
-    { title: "Follow up - Meta", start: "2026-05-20" },
+    { title: "Interview at Google", start: "2026-05-14T00:00:00.000Z", end: "2026-05-14T02:00:00.000Z" },
   ]
 
   return (
@@ -22,8 +21,8 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Application Pipeline</h2>
-            <p className="text-sm text-gray-500">Drag and drop to update status</p>
+            <h2 className="text-lg font-semibold text-foreground">Event Calendars</h2>
+            <p className="text-sm text-gray-500">Check out upcoming events easily</p>
           </div>
 
         </div>
@@ -32,23 +31,25 @@ export default function CalendarPage() {
         {/* {isLoading && <h1 className="mt-30 text-2xl">Loading board...</h1>}
         {error && <h1 className="mt-30 text-2xl">{error}</h1>}
         {!isLoading && !error && ( */}
-        <div className=".fc">
+        <div className=".fc mt-10">
           <FullCalendar
+            timeZone="locale"
             eventClassNames={"rounded-lg px-2 text-2xl font-medium"}
             plugins={[dayGridPlugin, timeGridPlugin]}
-            initialView="dayGridWeek"
+            initialView="timeGridWeek"
             events={events}
             headerToolbar={{
               left: "prev,next today",
               center: "title",
               right: "timeGridWeek,dayGridMonth",
             }}
-            eventColor="#6366f1"        // all events color
+            eventColor="#00d492 "        // all events color
             eventTextColor="#ffffff"
-            slotDuration={"01:00:00"}
+            eventDisplay="HELLO"
+            slotDuration={"00:30:00"}
             expandRows={true}
             allDaySlot={false}
-            dayMaxEvents={3}            // show "+X more" after 3
+            nowIndicator={true}
           />
         </div>
 
