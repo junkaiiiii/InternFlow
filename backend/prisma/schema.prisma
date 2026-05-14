@@ -52,6 +52,16 @@ model Application {
   priority   ApplicationPriority
   url        String
   skills     String[]
+  events     Event[]
   appliedAt  DateTime?
   createdAt  DateTime            @default(now())
+}
+
+model Event {
+  id            Int              @id @default(autoincrement())
+  title         String
+  start         DateTime
+  duration      Int     //in minutes
+  applicationId Int
+  application   Application      @relation(fields: [applicationId], references: [id])
 }

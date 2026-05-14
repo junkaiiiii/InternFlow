@@ -49,3 +49,14 @@ export class BoardSchema extends ValidateSchema {
 
     public static updateApplicationSchema = this.createApplicationSchema.partial() ;
 }
+
+export class EventSchema extends ValidateSchema {
+    public static createEventSchema = z.object({
+       title: z.string(),
+       start: z.date(),
+       duration: z.number(),
+       applicationId: z.number()
+    })
+
+    public static updateApplicationSchema = this.createEventSchema.partial() ;
+}
