@@ -24,10 +24,10 @@ class BoardService {
                     columns: { create: this.DEFAULT_COLUMNS }
                 },
                 include: {
-                    columns: {include : {applications: true}}
+                    columns: { include: { applications: true } }
                 }
             })
-            sendSuccess(res, {board})
+            sendSuccess(res, { board })
 
         } catch {
             sendError(res, "Error when initializing board")
@@ -37,7 +37,7 @@ class BoardService {
     public static fetchBoardByUserId = async (req: Request, res: Response) => {
         try {
             // or use req.user!.id ?? then only can fetch user own board. hmmm
-            
+
             const userId = req.user!.id
             const boardData = await prisma.board.findUniqueOrThrow({
                 where: { userId },
@@ -115,15 +115,15 @@ class BoardService {
             const { company, role, priority, appliedAt, url, skills } = req.body
 
             const data = {
-                ...(company && {company}),
-                ...(role && {role}),
-                ...(priority && {priority}),
-                ...(appliedAt && {appliedAt}),
-                ...(url && {url}),
-                ...(skills && {skills})
+                ...(company && { company }),
+                ...(role && { role }),
+                ...(priority && { priority }),
+                ...(appliedAt && { appliedAt }),
+                ...(url && { url }),
+                ...(skills && { skills })
             }
 
-            
+
 
             const application = await prisma.application.update({
                 where: {
@@ -139,6 +139,57 @@ class BoardService {
             sendError(res, "Error when creating application")
         }
     }
+
+    public static deleteApplication = async (req: Request, res: Response) => {
+        const id = parseId(req.params.id);
+        const userId = req.user!.id;
+
+        try {
+            // delete and reorder (use transaction)
+            await prisma.$transaction(async (tx) => {
+                // Find and delete the application
+                const application = await tx.application.delete({
+                    where: {
+                        id,
+                    },
+                    include: {
+                        column: {
+                            include: {
+                                board: true,
+                            },
+                        },
+                    },
+                });
+
+               
+                if (application.column.board.userId !== userId) {
+                    throw new Error("Unauthorized request to delete application");
+                }
+
+                const applications = await tx.application.findMany({
+                    where: { columnId: application.columnId },
+                    orderBy: { order: "asc" },
+                });
+
+                await Promise.all(
+                    applications.map((app, index) =>
+                        tx.application.update({
+                            where: { id: app.id },
+                            data: { order: index },
+                        })
+                    )
+                );
+            });
+
+            sendSuccess(res, {message: `Successful delete application ${id}`});
+        } catch (error) {
+            console.error(error);
+            sendError(res, "Failed to delete application");
+        }
+    }
+        
+
+    
 
     public static reoderCards = async (req: Request, res: Response) => {
         // get data first
@@ -177,7 +228,7 @@ class BoardService {
 
                 // reassign the order
                 await Promise.all(
-                    fromCards.map((c, i) => 
+                    fromCards.map((c, i) =>
                         tx.application.update({
                             where: { id: c.id },
                             data: { order: i }

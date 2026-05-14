@@ -76,10 +76,10 @@ export default function UpdateApplicationPopUp({
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white">
-              Create Application
+              Update Application
             </h2>
             <p className="text-sm text-gray-400">
-              Add a new internship application
+              Update internship application details
             </p>
           </div>
 

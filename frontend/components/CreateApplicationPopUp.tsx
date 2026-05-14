@@ -68,6 +68,16 @@ export default function CreateApplicationPopUp({
     }
 
     await onSubmit(application)
+    setFormData(prev => ({
+      ...prev,
+      company: '',
+      role: '',
+      priority: AppicationPriority.medium,
+      skills: [],
+      url: '',
+      appliedAt: null
+    }))
+    setSkillInput('')
   }
 
   const handleClose = () => {
@@ -253,7 +263,7 @@ export default function CreateApplicationPopUp({
                 })
               }
               style={{ colorScheme: 'dark' }}
-            className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-primary text-white"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-primary text-white"
             />
           </div>
 

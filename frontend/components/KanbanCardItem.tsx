@@ -1,4 +1,4 @@
-import { GripVertical } from "lucide-react"
+import { GripVertical, Trash2 } from "lucide-react"
 import type { TApplication } from "@/types/types"
 
 
@@ -9,7 +9,7 @@ const priorityColors = {
 }
 
 
-export default function KanbanCardItem({ card, color }: { card: TApplication, color: string }) {
+export default function KanbanCardItem({ card, color, onDelete }: { card: TApplication, color: string, onDelete: (id: number) => void }) {
 	const appliedAt = card.appliedAt ? new Date(card.appliedAt).toLocaleDateString() : "N/A"
 
 	return (
@@ -19,8 +19,14 @@ export default function KanbanCardItem({ card, color }: { card: TApplication, co
 			<div className={`absolute left-0 top-3 h-10 w-[3px] rounded-r ${priorityColors[card.priority]}`} />
 
 			{/* Drag handle - visible on hover */}
-			<div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity">
-				<GripVertical className="h-4 w-4 text-muted-foreground" />
+			<div className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1"
+				onClick={(e)=>{ 
+					e.stopPropagation()
+					console.log("delete")
+					onDelete(card.id)
+				}}
+			>
+				<Trash2 className="h-4 w-4 text-red-500" />
 			</div>
 
 			<div className="flex items-start gap-5 mb-2 ">

@@ -23,5 +23,6 @@ router.post("/application", validate(BoardSchema.createApplicationSchema), Board
 router.post("/init", BoardService.initBoard) //userid id is in jwt payload alr
 router.put("/", validate(BoardSchema.reorderCardsSchema), BoardService.reoderCards)
 router.put("/application/:id", validate(BoardSchema.updateApplicationSchema), validate(BoardSchema.idParamSchema, "params"), BoardService.updateApplication)
+router.delete("/application/:id", validate(BoardSchema.idParamSchema, "params"), BoardService.deleteApplication)
 
 export default router;

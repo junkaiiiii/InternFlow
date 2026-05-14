@@ -32,7 +32,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                     app.company?.toLowerCase().includes(query) ||
                     app.role?.toLowerCase().includes(query) ||
                     app.skills?.some(skill => skill.toLowerCase().includes(query))
-                ){ ids.push(app.id) }
+                ) { ids.push(app.id) }
             })
         )
         return ids
@@ -107,9 +107,9 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
             }
             console.log(application)
 
-            const {id, ...rest} = application
-            const res: TApiResponse<{ application: TApplication }> = await api.put(`/board/application/${application.id}`,rest)
-            
+            const { id, ...rest } = application
+            const res: TApiResponse<{ application: TApplication }> = await api.put(`/board/application/${application.id}`, rest)
+
             if (!res.success) {
                 alert(res.error)
                 return
@@ -124,6 +124,34 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
         } catch (error) {
             console.error(error)
             alert("Error when creating new application")
+        }
+    }
+
+    const handleDeleteApplication = async (id: number) => {
+        try {
+            if (!id) {
+                alert(`Cannot delete application with invalid id: ${id}`)
+                return
+            }
+
+            const res: TApiResponse<{ message: string }> = await api.delete(`/board/application/${id}`)
+
+            if (!res.success) {
+                alert(`${res.error}`)
+                return
+            }
+
+            // update to frontend
+            setColumns(prev => prev.map(col => {
+                if (col.applications.some(app => app.id === id)) {
+                    return {...col, applications: col.applications.filter(a => a.id !== id)}
+                }
+                return col
+            }
+            ))
+        } catch (error) {
+            console.error(error)
+            alert(`Error when deleting application with id: ${id}`)
         }
     }
 
@@ -229,18 +257,16 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                                                             }}
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
-                                                            className={`rounded-lg transition-all duration-200 ${
-                                                                searchQuery && !isMatch
+                                                            className={`rounded-lg transition-all duration-200 ${searchQuery && !isMatch
                                                                     ? "opacity-50"           // dim non-matches
                                                                     : ""
-                                                            } ${
-                                                                isActive
+                                                                } ${isActive
                                                                     ? "ring-3 ring-primary ring-offset-2"  // highlight active match
                                                                     : ""
-                                                            } `}
+                                                                } `}
                                                         >
                                                             <div onClick={() => handleOpenUpdatePopUp(card)}>
-                                                                <KanbanCardItem card={card} color={col.color as string} />
+                                                                <KanbanCardItem card={card} color={col.color as string} onDelete={handleDeleteApplication}/>
                                                             </div>
                                                         </div>
                                                     )}
@@ -253,7 +279,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
                             </Droppable>
                             <button className="flex w-full h-10 items-center justify-center rounded-md border-dashed border text-sm font-medium text-primary-foreground bg-background/70 hover:bg-background/90 cursor-pointer"
                                 onClick={() => {
-                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length + 1 })
+                                    setNewApplicationPosition({ columnId: col.id, order: col.applications.length })
                                     setCreationPopUpShowing(prev => !prev)
 
                                 }}>
@@ -266,7 +292,7 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
             </DragDropContext>
 
             {/* TODO: handle colId and order better */}
-            {(newApplicationPosition?.columnId && newApplicationPosition.order) && (
+            {(newApplicationPosition?.columnId && newApplicationPosition.order !== null) && (
                 <CreateApplicationPopUp
                     isShowing={creationPopUpShowing}
                     columnId={newApplicationPosition!.columnId}
