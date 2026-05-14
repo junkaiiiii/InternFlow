@@ -73,4 +73,26 @@ export type TApplicationCreation = Omit<
 export type TApplicationUpdate = Omit<
     TApplication,
     "column" | "createdAt"
->
+> 
+export type TEventServer = {
+    id: number
+    title: string;
+    start: Date;
+    duration: number;
+    applicationId: number;
+}
+
+export type TEventClient = {
+    id: number;
+    title: string;
+    start: Date;
+    end: Date;
+    applicationId: number;
+}
+
+export type TEventCreation = {
+    title: string
+    start: string    //  just string first for the sake of date input
+    duration: number
+    applicationId: number
+  }

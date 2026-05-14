@@ -5,18 +5,36 @@ import type { TEvent, TEventReturn, TEventWithApplication } from "../types/types
 import { parseId } from "../libs/parse.js"
 class EventService {
     public static createEvents = async (req: Request, res: Response) => {
-        try{
-            const {title, start, duration, applicationId} : Omit<TEvent, "id"> = req.body
+        try {
 
-            const event = await prisma.event.create({
-                data:{
+            const { title, start, duration, applicationId }: Omit<TEvent, "id"> = req.body
+            console.log("=== BACKEND RECEIVED ===")
+            console.log("raw body.start:", start)
+            console.log("parsed:", new Date(start))
+            console.log("toISOString:", new Date(start).toISOString())
+
+
+            const e = await prisma.event.create({
+                data: {
                     title, start, duration, applicationId
-                }
+                },
+                include: { application: true }
             })
 
-            sendSuccess(res, {event})
+            const startDate = new Date(start)
+            const endDate = new Date(startDate.getTime() + duration * 60 * 1000)
+
+            sendSuccess(res, {
+                event: {
+                    id: e.id,
+                    start: startDate,
+                    end: endDate,
+                    title: `${e.title} (${e.application.company}-${e.application.role})`,
+                    applicationId: e.applicationId
+                }
+            })
         } catch {
-            sendError(res, `Error when creating event title` )
+            sendError(res, `Error when creating event title`)
         }
     }
 
@@ -50,7 +68,7 @@ class EventService {
                     applicationId: true,
                     application: {
                         select: {
-                            company: true, 
+                            company: true,
                             role: true
                         }
                     }
@@ -58,15 +76,19 @@ class EventService {
             })
 
             // convert duration to end
-            const cleanedEvents: TEventReturn[] = events.map(e => ({
-                id: e.id,
-                start: e.start,
-                end: new Date(e.start.getTime() + e.duration * 60 * 1000),
-                title: `${e.title} (${e.application.company}-${e.application.role})`,
-                applicationId: e.applicationId
-            }))
+            const cleanedEvents: TEventReturn[] = events.map(e => {
+                const startDate = new Date(e.start)
+                const endDate = new Date(startDate.getTime() + e.duration * 60 * 1000)
+                return {
+                    id: e.id,
+                    start: startDate,
+                    end: endDate,
+                    title: `${e.title} (${e.application.company}-${e.application.role})`,
+                    applicationId: e.applicationId
+                }
+            })
 
-            sendSuccess(res, {events: cleanedEvents})
+            sendSuccess(res, { events: cleanedEvents })
 
         } catch {
             sendError(res, "Error when fetching events")
@@ -77,7 +99,7 @@ class EventService {
 
         try {
             await prisma.event.delete({
-                where: { id }, 
+                where: { id },
             });
 
             sendSuccess(res, { message: "Event deleted successfully" });
@@ -94,12 +116,12 @@ class EventService {
 
         try {
             // Update the event by ID
-            const updatedEvent: TEvent= await prisma.event.update({
-                where: { id}, // Ensure ID is parsed as an integer
+            const updatedEvent: TEvent = await prisma.event.update({
+                where: { id }, // Ensure ID is parsed as an integer
                 data: {
-                    ...(start && {start}), // Ensure start is a valid Date object
-                    ...(duration && {duration}), // Ensure duration is an integer
-                    ...(title && {title})
+                    ...(start && { start }), // Ensure start is a valid Date object
+                    ...(duration && { duration }), // Ensure duration is an integer
+                    ...(title && { title })
                 },
             });
 

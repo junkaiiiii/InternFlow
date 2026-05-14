@@ -53,7 +53,7 @@ export class BoardSchema extends ValidateSchema {
 export class EventSchema extends ValidateSchema {
     public static createEventSchema = z.object({
        title: z.string(),
-       start: z.date(),
+       start: z.string(), //coerce convert ISO string to Date automatically DAMN
        duration: z.number(),
        applicationId: z.number()
     })

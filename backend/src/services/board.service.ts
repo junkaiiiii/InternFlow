@@ -68,6 +68,23 @@ class BoardService {
         }
     }
 
+    public static fetchApplicationsByUserId = async (req: Request, res: Response) => {
+        try {
+            const userId = req.user!.id
+
+            const applications = await prisma.application.findMany({
+                where: { column: { board: { userId: userId } } }
+            })
+
+            sendSuccess(res, {applications})
+        } catch {
+            sendError(res, "Error when fetching board")
+        }
+
+
+
+    }
+
     public static createApplication = async (req: Request, res: Response) => {
         try {
             const userId = req.user!.id
@@ -161,7 +178,7 @@ class BoardService {
                     },
                 });
 
-               
+
                 if (application.column.board.userId !== userId) {
                     throw new Error("Unauthorized request to delete application");
                 }
@@ -181,15 +198,15 @@ class BoardService {
                 );
             });
 
-            sendSuccess(res, {message: `Successful delete application ${id}`});
+            sendSuccess(res, { message: `Successful delete application ${id}` });
         } catch (error) {
             console.error(error);
             sendError(res, "Failed to delete application");
         }
     }
-        
 
-    
+
+
 
     public static reoderCards = async (req: Request, res: Response) => {
         // get data first

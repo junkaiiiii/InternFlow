@@ -60,7 +60,7 @@ model Application {
 model Event {
   id            Int              @id @default(autoincrement())
   title         String
-  start         DateTime
+  start         String
   duration      Int     //in minutes
   applicationId Int
   application   Application      @relation(fields: [applicationId], references: [id])
