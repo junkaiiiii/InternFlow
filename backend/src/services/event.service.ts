@@ -4,7 +4,7 @@ import prisma from "../libs/prisma.js"
 import type { TEvent, TEventReturn, TEventWithApplication } from "../types/types.js"
 import { parseId } from "../libs/parse.js"
 class EventService {
-    public static createEvents = async (req: Request, res: Response) => {
+    public static createEvent = async (req: Request, res: Response) => {
         try {
 
             const { title, start, duration, applicationId }: Omit<TEvent, "id"> = req.body
@@ -14,25 +14,14 @@ class EventService {
             console.log("toISOString:", new Date(start).toISOString())
 
 
-            const e = await prisma.event.create({
+            const event = await prisma.event.create({
                 data: {
                     title, start, duration, applicationId
                 },
                 include: { application: true }
             })
 
-            const startDate = new Date(start)
-            const endDate = new Date(startDate.getTime() + duration * 60 * 1000)
-
-            sendSuccess(res, {
-                event: {
-                    id: e.id,
-                    start: startDate,
-                    end: endDate,
-                    title: `${e.title} (${e.application.company}-${e.application.role})`,
-                    applicationId: e.applicationId
-                }
-            })
+            sendSuccess(res, { event })
         } catch {
             sendError(res, `Error when creating event title`)
         }
@@ -76,19 +65,19 @@ class EventService {
             })
 
             // convert duration to end
-            const cleanedEvents: TEventReturn[] = events.map(e => {
-                const startDate = new Date(e.start)
-                const endDate = new Date(startDate.getTime() + e.duration * 60 * 1000)
-                return {
-                    id: e.id,
-                    start: startDate,
-                    end: endDate,
-                    title: `${e.title} (${e.application.company}-${e.application.role})`,
-                    applicationId: e.applicationId
-                }
-            })
+            // const cleanedEvents: TEventReturn[] = events.map(e => {
+            //     const startDate = new Date(e.start)
+            //     const endDate = new Date(startDate.getTime() + e.duration * 60 * 1000)
+            //     return {
+            //         id: e.id,
+            //         start: startDate,
+            //         end: endDate,
+            //         title: `${e.title} (${e.application.company}-${e.application.role})`,
+            //         applicationId: e.applicationId
+            //     }
+            // })
 
-            sendSuccess(res, { events: cleanedEvents })
+            sendSuccess(res, { events })
 
         } catch {
             sendError(res, "Error when fetching events")

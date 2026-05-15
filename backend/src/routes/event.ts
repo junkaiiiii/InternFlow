@@ -17,7 +17,7 @@ const router = Router();
 // router.get("/:id", validate(UserSchema.idParamSchema, "params"), UserService.getUserById);
 router.use("/", authMiddleware)
 router.get('/allEvents', EventService.getEvents)
-router.post('/', validate(EventSchema.createEventSchema), EventService.createEvents)
+router.post('/', validate(EventSchema.createEventSchema), EventService.createEvent)
 router.put('/:id', validate(EventSchema.idParamSchema, "params"), validate(EventSchema.idParamSchema, "params"), EventService.updateEvent)
 router.delete('/:id', validate(EventSchema.idParamSchema, "params"), EventService.deleteEvent)
 

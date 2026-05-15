@@ -19,6 +19,15 @@ export class EventValidator extends Validator{
 
         const error = this.checkEmpty(data)
 
-        return error ? error : null
+        if (error) return error
+
+        if (data.duration && data.duration <= 0){
+            return "Duration should be positive number"
+        }
+
+        return null
+    }
+    static deleteEvent = (id: number) => {
+        return (id <= 0 && !id) ? "Id cannot be empty and must be positive" : null
     }
 }

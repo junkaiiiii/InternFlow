@@ -77,16 +77,16 @@ export type TApplicationUpdate = Omit<
 export type TEventServer = {
     id: number
     title: string;
-    start: Date;
+    start: string;
     duration: number;
     applicationId: number;
 }
 
-export type TEventClient = {
+export type TEventCalendar = {
     id: number;
     title: string;
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
     applicationId: number;
 }
 
