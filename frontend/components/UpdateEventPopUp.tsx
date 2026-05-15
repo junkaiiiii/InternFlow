@@ -73,11 +73,11 @@ export default function UpdateEventPopUp({
                 <div className="mb-6 flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold text-white">
-                            Create Event
+                            Update Event
                         </h2>
 
                         <p className="text-sm text-gray-400">
-                            Schedule a new interview or task
+                            Update date of a new interview or task
                         </p>
                     </div>
 
