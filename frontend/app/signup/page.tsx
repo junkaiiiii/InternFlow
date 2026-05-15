@@ -55,7 +55,7 @@ export default function SignUp() {
 
             if (data.success) {
                 localStorage.setItem("intern-flow-token", data.data.token)
-                router.push('/analytics')
+                router.push('/dashboard')
             }
         } catch (error: unknown) {
             if (error instanceof Error) {

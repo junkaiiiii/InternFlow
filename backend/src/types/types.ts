@@ -31,3 +31,22 @@ export type TEventReturn = {
 }
 
 export type TEventWithApplication = TEvent & {application:Pick<TApplication, "company"|"role">}
+
+// types/dashboard.ts
+
+export type TPipelineStage = {
+    stage: string;
+    count: number;
+    percentage: number;
+}
+
+
+export type TTopSkill = {
+    skill: string;
+    count: number;
+}
+
+export type TAnalyticsResponse = {
+    pipelineData: TPipelineStage[];
+    topSkills: TTopSkill[];
+}

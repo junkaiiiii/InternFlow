@@ -73,7 +73,7 @@ export type TApplicationCreation = Omit<
 export type TApplicationUpdate = Omit<
     TApplication,
     "column" | "createdAt"
-> 
+>
 export type TEventServer = {
     id: number
     title: string;
@@ -95,4 +95,20 @@ export type TEventCreation = {
     start: string    //  just string first for the sake of date input
     duration: number
     applicationId: number
-  }
+}
+
+export type TPipelineStage = {
+    stage: string;
+    count: number;
+    percentage: number;
+}
+
+export type TTopSkill = {
+    skill: string;
+    count: number;
+}
+
+export type TAnalyticsResponse = {
+    pipelineData: TPipelineStage[];
+    topSkills: TTopSkill[];
+}

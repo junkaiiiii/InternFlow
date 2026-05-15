@@ -18,8 +18,6 @@ import type { TPublicUser } from "@/types/types"
 const navigation = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Applications", icon: Briefcase, href: "/applications" },
-    { name: "Analytics", icon: BarChart3, href: "/analytics" },
-    { name: "AI Match", icon: Sparkles, href: "/ai-match" },
     { name: "Calendar", icon: Calendar, href: "/calendar" },
     { name: "Settings", icon: Settings, href: "/settings" },
 ]
@@ -53,17 +51,6 @@ export default function Sidebar() {
                     <ChevronLeft
                         className={`h-4 w-4 transition-transform duration-200 ${collapsed ? "rotate-180" : ""}`}
                     />
-                </button>
-            </div>
-
-            {/* Quick Actions */}
-            <div className={`border-b border-border py-4 ${collapsed ? "px-2" : "px-3"}`}>
-                <button
-                    className={`flex w-full items-center rounded-lg bg-primary/10 py-2 text-primary transition-all hover:bg-primary/20 ${collapsed ? "justify-center px-2" : "justify-start gap-2 px-3"
-                        }`}
-                >
-                    <Plus className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="text-sm">Add Application</span>}
                 </button>
             </div>
 
