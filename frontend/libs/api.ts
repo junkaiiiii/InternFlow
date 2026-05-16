@@ -1,4 +1,4 @@
-const BASE_URL = "https://internflow-e7km.onrender.com/"
+const BASE_URL = "https://internflow-e7km.onrender.com/api/"
 
 const getToken = () => {
     if (typeof window === "undefined") return null;
