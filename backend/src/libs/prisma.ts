@@ -1,7 +1,8 @@
 import "dotenv/config";
 
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is required");
