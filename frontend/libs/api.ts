@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5132/api"
+const BASE_URL = "https://internflow-e7km.onrender.com/"
 
 const getToken = () => {
     if (typeof window === "undefined") return null;
