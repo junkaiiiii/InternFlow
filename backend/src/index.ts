@@ -11,7 +11,7 @@ const PORT = process.env.BACKEND_PORT ?? 5132;
 app.use(cors());
 app.use(express.json());
 
-app.use('/api',router)
+app.use('/api', router)
 
 app.get("/", (_req: Request, res: Response) => {
   res.json({
@@ -20,11 +20,17 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.get("/prisma", async (_req: Request, res: Response) => {
-  const users = await prisma.user.findMany();
+  try {
+    const users = await prisma.user.findMany();
 
-  res.json({
-    users,
-  });
+    res.json({
+      users,
+    });
+  } catch (error){
+    console.error("Prisma Error:",error)
+    res.status(500).json({ message: "Internal server error" });
+  }
+  
 });
 
 app.get("/health", (_req: Request, res: Response) => {
