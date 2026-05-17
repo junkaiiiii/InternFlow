@@ -18,6 +18,7 @@ export default function Login() {
         password: ""
     });
     const [error, setError] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const router = useRouter()
 
@@ -32,9 +33,11 @@ export default function Login() {
         // TODO: validate email and passwords and username (username check in backend) //done
 
         try {
+            setIsLoading(true)
             const error = AuthValidator.login(formData)
             if (error) {
                 setError(error)
+                setIsLoading(false)
             }
 
             // actual Login logic
@@ -56,6 +59,7 @@ export default function Login() {
             } else {
                 setError("An error occurred when logging in.");
             }
+            setIsLoading(false)
         }
 
     }
@@ -133,7 +137,7 @@ export default function Login() {
                                 className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer active:scale-[0.98]`}
                                 onClick={handleLogin}
                             >
-                                Login
+                                {isLoading ? "Loading..." : "Login"}
                             </button>
                         </div>
 
