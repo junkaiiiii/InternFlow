@@ -1,6 +1,6 @@
 "use client"
 
-import { Send, CalendarDays, Mic, TrendingUp, RefreshCw, AlertCircle } from "lucide-react"
+import { Send, BrainCircuit, RefreshCw, AlertCircle } from "lucide-react"
 import { useAnalytics } from "@/hooks/useAnalytics"
 import { MetricCard } from "@/components/MetricCard"
 import { PipelineChart } from "@/components/Pipelinechart"
@@ -65,8 +65,11 @@ export default function DashboardPage() {
                     
 
                     <div className="w-[80%] border-white border rounded-xl p-3">
-                        <div className="text-md font-bold mb-1">AI Analytics</div>
-                        {!summary?.summary ? "Generating AI Summary": summary?.summary}
+                        <div className="text-md font-bold mb-1 flex space-x-3">
+                            <BrainCircuit />
+                            <p>AI Analytics</p>
+                        </div>
+                        {!summary ? "Generating AI Summary": summary}
                     </div>
                 </div>
 

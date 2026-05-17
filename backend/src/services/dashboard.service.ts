@@ -57,7 +57,6 @@ class DashboardService {
 
     static getAISummary = async (req: Request, res: Response) => {
         const userId = req.user!.id
-
         try {
             const client = new OpenAI({
                 apiKey: process.env.GROQ_API_KEY,
@@ -75,14 +74,15 @@ class DashboardService {
                 })
             }
 
-            const resume = await prisma.document.findFirst({
+            const resume = await prisma.document.findUnique({
                 where: { userId }
             })
 
             if (!resume) {
-                return sendError(res, "Resume not found")
+                sendSuccess(res, { message: "Please upload resume in profile page first" })
+                return
             }
-
+        
             let resumeText = ""
 
             try {
@@ -110,6 +110,7 @@ class DashboardService {
                 skills: app.skills,               // the skills array you already store
             }))
 
+            console.log("DEBUG")
             const prompt = `
             You are an AI career advisor reviewing a student's internship job search.
 
@@ -154,7 +155,7 @@ class DashboardService {
                 return sendError(res, "AI returned invalid JSON")
             }
 
-            return sendSuccess(res, { message: parsed })
+            return sendSuccess(res, { message: parsed.summary })
 
         } catch (error) {
             console.error("AI SUMMARY ERROR:", error)

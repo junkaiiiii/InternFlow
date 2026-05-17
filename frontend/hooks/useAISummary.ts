@@ -3,7 +3,7 @@ import type { TAISummary } from "@/types/types"
 import { api } from "@/libs/api"
 
 export default function useAISummary() {
-    const [message, setMessage] = useState<{summary: string}>()
+    const [message, setMessage] = useState<string>()
 
     useEffect(()=>{
         api.get('/dashboard/ai')

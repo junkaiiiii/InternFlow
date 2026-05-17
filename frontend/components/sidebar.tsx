@@ -113,7 +113,9 @@ export default function Sidebar() {
                         </div>
                     )}
 
-                    <button onClick={()=>{
+                    <button
+                    className="cursor-pointer"
+                    onClick={()=>{
                         router.push('/');
                         localStorage.removeItem("intern-flow-token")
                     }}>
