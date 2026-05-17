@@ -15,6 +15,7 @@ model User {
   email         String?  @db.VarChar
   registered_at DateTime @db.Timestamptz(6)
   boards        Board[]
+  document      Document?
 }
 
 enum ApplicationPriority {
@@ -64,4 +65,14 @@ model Event {
   duration      Int     //in minutes
   applicationId Int
   application   Application      @relation(fields: [applicationId], references: [id])
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  mimetype  String
+  file      Bytes
+  createdAt DateTime @default(now())
+  userId    Int      @unique
+  user      User     @relation(fields:[userId], references: [id])
 }

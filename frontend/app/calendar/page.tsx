@@ -4,7 +4,7 @@ import "./calendar.css"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import timeGridPlugin from "@fullcalendar/timegrid"
-import Sidebar from "@/components/sidebar"
+import Sidebar from "@/components/Sidebar"
 import { useState, useEffect } from "react"
 import { api } from "@/libs/api"
 import { TApiResponse, TApplication, TEventCalendar, TEventCreation, TEventServer } from "@/types/types"
@@ -214,7 +214,7 @@ export default function CalendarPage() {
 
                     <div>
                         <button
-                            className="bg-primary hover:bg-primary/80 px-2 py-1 text-md font-semibold rounded-lg cursor-pointer transition"
+                            className="bg-primary hover:bg-primary/80 px-2 py-1 text-md font-semibold rounded-lg cursor-pointer transition active:scale-[0.98]"
                             onClick={() => setShowCreatePopUp(prev => !prev)}
                         >
                             Add Event

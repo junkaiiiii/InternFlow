@@ -5,7 +5,7 @@ import { useAnalytics } from "@/hooks/useAnalytics"
 import { MetricCard } from "@/components/MetricCard"
 import { PipelineChart } from "@/components/Pipelinechart"
 import { TopSkills } from "@/components/Topskills"
-import Sidebar from "@/components/sidebar"
+import Sidebar from "@/components/Sidebar"
 
 export default function DashboardPage() {
     const { data, isLoading, error, refetch } = useAnalytics()
@@ -19,7 +19,7 @@ export default function DashboardPage() {
                 <p className="text-sm">{error}</p>
                 <button
                     onClick={refetch}
-                    className="flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-muted transition-colors"
+                    className="flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-muted transition-colors active:scale-[0.98]"
                 >
                     <RefreshCw className="h-4 w-4" /> Retry
                 </button>
@@ -41,7 +41,7 @@ export default function DashboardPage() {
                     </div>
                     <button
                         onClick={refetch}
-                        className="bg-primary flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-primary/80 transition-colors disabled:opacity-50"
+                        className="bg-primary flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-primary/80 transition-colors disabled:opacity-50 active:scale-[0.98]"
                         disabled={isLoading}
                     >
                         <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />

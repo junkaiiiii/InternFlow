@@ -159,7 +159,7 @@ export default function SignUp() {
                             )
                             }
                             <button
-                                className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer`}
+                                className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer active:scale-[0.98]`}
                                 onClick={handleSignUp}
                             >
                                 Sign up

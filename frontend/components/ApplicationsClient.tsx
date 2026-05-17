@@ -1,5 +1,5 @@
 'use client'
-import Sidebar from "@/components/sidebar"
+import Sidebar from "@/components/Sidebar"
 import { KanbanBoard } from "@/components/KanbanBoard"
 import type { TApiResponse, TBoardDetailed, TColumnDetailed } from "@/types/types"
 import { api } from "@/libs/api"

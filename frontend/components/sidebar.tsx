@@ -6,12 +6,10 @@ import useCurrentUser from "@/hooks/useCurrentUser"
 import {
     LayoutDashboard,
     Briefcase,
-    BarChart3,
-    Sparkles,
+    CircleUser,
     Calendar,
     Settings,
     ChevronLeft,
-    Plus,
 } from "lucide-react"
 import type { TPublicUser } from "@/types/types"
 
@@ -19,7 +17,7 @@ const navigation = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Applications", icon: Briefcase, href: "/applications" },
     { name: "Calendar", icon: Calendar, href: "/calendar" },
-    { name: "Settings", icon: Settings, href: "/settings" },
+    { name: "Profile", icon: CircleUser, href: "/profile" },
 ]
 
 export default function Sidebar() {

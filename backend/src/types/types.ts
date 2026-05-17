@@ -1,5 +1,5 @@
 // src/types/user.ts
-import type{ User, Board, Column, Application, Event } from "@prisma/client";
+import type{ User, Board, Column, Application, Event, Document } from "@prisma/client";
 
 // full user from DB
 export type TUser = User;
@@ -50,3 +50,5 @@ export type TAnalyticsResponse = {
     pipelineData: TPipelineStage[];
     topSkills: TTopSkill[];
 }
+
+export type TDocument = Document
