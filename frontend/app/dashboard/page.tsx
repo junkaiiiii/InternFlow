@@ -6,9 +6,12 @@ import { MetricCard } from "@/components/MetricCard"
 import { PipelineChart } from "@/components/Pipelinechart"
 import { TopSkills } from "@/components/Topskills"
 import Sidebar from "@/components/Sidebar"
+import useAISummary from "@/hooks/useAISummary"
+import type { TAISummary } from "@/types/types"
 
 export default function DashboardPage() {
     const { data, isLoading, error, refetch } = useAnalytics()
+    const summary = useAISummary()
 
     const totalApps = data?.pipelineData.reduce((s, c) => s + c.count, 0) ?? 0
 
@@ -51,13 +54,20 @@ export default function DashboardPage() {
 
 
                 {/* Metric cards */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="flex justify-between">
+                    <div className="w-[20%] border-white border rounded-xl mr-5">
                     <MetricCard
                         label="Total applied"
                         value={isLoading ? "—" : totalApps}
                         icon={<Send className="h-4 w-4" />}
                     />
-                
+                    </div>
+                    
+
+                    <div className="w-[80%] border-white border rounded-xl p-3">
+                        <div className="text-md font-bold mb-1">AI Analytics</div>
+                        {!summary?.summary ? "Generating AI Summary": summary?.summary}
+                    </div>
                 </div>
 
 

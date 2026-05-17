@@ -120,3 +120,9 @@ export type TDocument = {
     filename: string;
     mimetype: string;
 }
+
+export type TAISummary={
+    summary: string
+    strength: string
+    skillGaps: string
+}

@@ -21,12 +21,12 @@ function InfoRow({
 }) {
     return (
         <div className="flex items-start gap-3 py-3 border-b border-primary/10 last:border-0">
-            <span className="mt-0.5 text-primary/60 shrink-0">{icon}</span>
+            <span className="mt-0.5 textwhite shrink-0">{icon}</span>
             <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary/40 mb-0.5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-white mb-0.5">
                     {label}
                 </p>
-                <p className="text-sm font-medium text-primary truncate">{value}</p>
+                <p className="text-sm font-medium text-white truncate">{value}</p>
             </div>
         </div>
     );
