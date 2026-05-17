@@ -6,12 +6,11 @@ import useCurrentUser from "@/hooks/useCurrentUser"
 import {
     LayoutDashboard,
     Briefcase,
-    BarChart3,
-    Sparkles,
+    CircleUser,
     Calendar,
     Settings,
     ChevronLeft,
-    Plus,
+    LogOut
 } from "lucide-react"
 import type { TPublicUser } from "@/types/types"
 
@@ -19,14 +18,14 @@ const navigation = [
     { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { name: "Applications", icon: Briefcase, href: "/applications" },
     { name: "Calendar", icon: Calendar, href: "/calendar" },
-    { name: "Settings", icon: Settings, href: "/settings" },
+    { name: "Profile", icon: CircleUser, href: "/profile" },
 ]
 
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false)
     const path = usePathname()
     const router = useRouter()
-    const user: TPublicUser|null= useCurrentUser()
+    const user: TPublicUser | null = useCurrentUser()
 
     return (
         <div
@@ -98,7 +97,7 @@ export default function Sidebar() {
                 >
                     <div className="relative">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/60 to-primary text-xs font-semibold text-primary-foreground">
-                            {user?.username.slice(0,2).toUpperCase()}
+                            {user?.username.slice(0, 2).toUpperCase()}
                         </div>
                         <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-sidebar bg-green-500" />
                     </div>
@@ -113,7 +112,17 @@ export default function Sidebar() {
                             </p>
                         </div>
                     )}
+
+                    <button
+                    className="cursor-pointer"
+                    onClick={()=>{
+                        router.push('/');
+                        localStorage.removeItem("intern-flow-token")
+                    }}>
+                        <LogOut className="text-sm"/>
+                    </button>
                 </div>
+
             </div>
         </div>
     )

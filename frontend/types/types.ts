@@ -112,3 +112,17 @@ export type TAnalyticsResponse = {
     pipelineData: TPipelineStage[];
     topSkills: TTopSkill[];
 }
+
+export type TDocument = {
+    id: number;
+    userId: number;
+    createdAt: Date;
+    filename: string;
+    mimetype: string;
+}
+
+export type TAISummary={
+    summary: string
+    strength: string
+    skillGaps: string
+}

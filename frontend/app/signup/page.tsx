@@ -22,6 +22,7 @@ export default function SignUp() {
         confirmPassword: "",
     });
     const [error, setError] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const router = useRouter()
 
@@ -36,9 +37,11 @@ export default function SignUp() {
         // TODO: validate email and passwords and username (username check in backend) //done
 
         try {
+            setIsLoading(true)
             const error = AuthValidator.signup(formData)
             if (error) {
                 setError(error)
+                setIsLoading(false)
                 return
             }
 
@@ -60,8 +63,10 @@ export default function SignUp() {
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error.message);
+                setIsLoading(false)
             } else {
                 setError("An unknown error occurred.");
+                setIsLoading(false)
             }
         }
 
@@ -159,10 +164,10 @@ export default function SignUp() {
                             )
                             }
                             <button
-                                className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer`}
+                                className={` ${error ? 'mt-3' : 'mt-10'} h-12 w-full rounded-lg bg-primary px-5 text-sm font-semibold text-black shadow-lg shadow-primary/20 transition hover:bg-emerald-500 cursor-pointer active:scale-[0.98]`}
                                 onClick={handleSignUp}
                             >
-                                Sign up
+                                {isLoading ? "Loading..." : "Sign up"}
                             </button>
                         </div>
 

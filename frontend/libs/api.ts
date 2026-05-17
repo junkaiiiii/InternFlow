@@ -52,5 +52,19 @@ export const api = {
             .then(res => res.json())
     },
 
-
+    filePost: (path: string, formData: FormData) => {
+        const token = getToken();
+    
+        const headers: HeadersInit = {};
+    
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+    
+        return fetch(`${BASE_URL}${path}`, {
+            method: "POST",
+            headers, 
+            body: formData,
+        }).then(res => res.json());
+    },
 }

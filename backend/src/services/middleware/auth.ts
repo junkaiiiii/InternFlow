@@ -4,7 +4,6 @@ import { verifyToken } from "../../libs/jwt.js";
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const header = req.headers.authorization;
-
     // client sends:  Authorization: Bearer <token>
     if (!header?.startsWith("Bearer ")) {
         return sendError(res, "Unauthorized", 401);

@@ -1,14 +1,17 @@
 "use client"
 
-import { Send, CalendarDays, Mic, TrendingUp, RefreshCw, AlertCircle } from "lucide-react"
+import { Send, BrainCircuit, RefreshCw, AlertCircle } from "lucide-react"
 import { useAnalytics } from "@/hooks/useAnalytics"
 import { MetricCard } from "@/components/MetricCard"
 import { PipelineChart } from "@/components/Pipelinechart"
 import { TopSkills } from "@/components/Topskills"
-import Sidebar from "@/components/sidebar"
+import Sidebar from "@/components/Sidebar"
+import useAISummary from "@/hooks/useAISummary"
+import type { TAISummary } from "@/types/types"
 
 export default function DashboardPage() {
     const { data, isLoading, error, refetch } = useAnalytics()
+    const summary = useAISummary()
 
     const totalApps = data?.pipelineData.reduce((s, c) => s + c.count, 0) ?? 0
 
@@ -19,7 +22,7 @@ export default function DashboardPage() {
                 <p className="text-sm">{error}</p>
                 <button
                     onClick={refetch}
-                    className="flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-muted transition-colors"
+                    className="flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-muted transition-colors active:scale-[0.98]"
                 >
                     <RefreshCw className="h-4 w-4" /> Retry
                 </button>
@@ -41,7 +44,7 @@ export default function DashboardPage() {
                     </div>
                     <button
                         onClick={refetch}
-                        className="bg-primary flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-primary/80 transition-colors disabled:opacity-50"
+                        className="bg-primary flex items-center gap-2 text-sm border rounded-md px-3 py-1.5 hover:bg-primary/80 transition-colors disabled:opacity-50 active:scale-[0.98]"
                         disabled={isLoading}
                     >
                         <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
@@ -51,13 +54,23 @@ export default function DashboardPage() {
 
 
                 {/* Metric cards */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="flex justify-between">
+                    <div className="w-[20%] border-white border rounded-xl mr-5">
                     <MetricCard
                         label="Total applied"
                         value={isLoading ? "—" : totalApps}
                         icon={<Send className="h-4 w-4" />}
                     />
-                
+                    </div>
+                    
+
+                    <div className="w-[80%] border-white border rounded-xl p-3">
+                        <div className="text-md font-bold mb-1 flex space-x-3">
+                            <BrainCircuit />
+                            <p>AI Analytics</p>
+                        </div>
+                        {!summary ? "Generating AI Summary": summary}
+                    </div>
                 </div>
 
 

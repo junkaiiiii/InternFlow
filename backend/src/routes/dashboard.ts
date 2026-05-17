@@ -6,5 +6,6 @@ const router = Router();
 
 router.use("/", authMiddleware)
 router.get('/', DashboardService.getAnalytics)
+router.get('/ai', DashboardService.getAISummary)
 
 export default router;
