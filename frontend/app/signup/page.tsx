@@ -173,7 +173,7 @@ export default function SignUp() {
 
                         <p className="mt-6 text-center text-sm text-[#64716d]">
                             Already have an account?{" "}
-                            <a className="font-semibold text-[#0c7f5e] hover:text-[#075a43]" href="/login">
+                            <a className="font-semibold text-[#0c7f5e] hover:text-[#075a43]" href="/">
                                 Log in
                             </a>
                         </p>
