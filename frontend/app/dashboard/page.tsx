@@ -5,7 +5,7 @@ import { useAnalytics } from "@/hooks/useAnalytics"
 import { MetricCard } from "@/components/MetricCard"
 import { PipelineChart } from "@/components/Pipelinechart"
 import { TopSkills } from "@/components/Topskills"
-import Sidebar from "@/components/Sidebar"
+import Sidebar from "@/components/sidebar"
 import useAISummary from "@/hooks/useAISummary"
 import type { TAISummary } from "@/types/types"
 
