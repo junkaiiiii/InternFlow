@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { TApiResponse, TDocument, TPublicUser } from "@/types/types";
-import Sidebar from "@/components/Sidebar"
+import Sidebar from "@/components/sidebar"
 import { api } from "@/libs/api";
 // type TPublicUser = {
 //     id: number;

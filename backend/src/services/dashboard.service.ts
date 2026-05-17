@@ -131,7 +131,7 @@ class DashboardService {
             APPLICATIONS (${appSummary.length} total):
             ${JSON.stringify(appSummary, null, 2)}
             `
-
+            console.log("DEBUG HEREE")
             const response = await client.chat.completions.create({
                 model: "llama-3.1-8b-instant",
                 messages: [
