@@ -223,7 +223,7 @@ export default function UpdateApplicationPopUp({
           {/* Applied Date */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
-              Applied Date
+              Applied Date (Optional)
             </label>
 
             <input
@@ -254,7 +254,7 @@ export default function UpdateApplicationPopUp({
               type="submit"
               className="rounded-xl bg-primary px-5 py-3 font-medium text-white transition hover:opacity-90 cursor-pointer focus: pcacity-50"
             >
-              Create
+              Update
             </button>
           </div>
         </form>

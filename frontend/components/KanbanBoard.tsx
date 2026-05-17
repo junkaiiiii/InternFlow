@@ -101,11 +101,6 @@ export function KanbanBoard({ initialData }: { initialData: TColumnDetailed[] })
 
     const handleUpdateApplication = async (application: TApplicationUpdate) => {
         try {
-            const error = BoardValidator.updateApplication(application)
-            if (error) {
-                alert(error)
-                return
-            }
             console.log(application)
 
             const { id, ...rest } = application
