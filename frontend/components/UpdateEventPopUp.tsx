@@ -19,13 +19,6 @@ export default function UpdateEventPopUp({
 }: Props) {
     const [formData, setFormData] = useState<TEventServer>(event)
 
-    // when applications load, set the default
-    useEffect(() => {
-        if (applications?.length > 0) {
-            setFormData(prev => ({ ...prev, applicationId: applications[0].id }))
-        }
-    }, [applications])
-
     const handleClose = () => {
         setFormData({
             id: 0,
